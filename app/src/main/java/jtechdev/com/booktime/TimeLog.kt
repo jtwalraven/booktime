@@ -1,5 +1,6 @@
 package jtechdev.com.booktime
 
+import android.arch.persistence.room.Room
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -12,6 +13,7 @@ import jtechdev.com.booktime.bookview.BookRecyclerViewAdapter
 import kotlinx.android.synthetic.main.activity_time_log.*
 import android.support.v7.widget.RecyclerView
 import jtechdev.com.booktime.data.Book
+import jtechdev.com.booktime.data.BookDatabase
 
 
 class TimeLog : AppCompatActivity() {
@@ -37,13 +39,15 @@ class TimeLog : AppCompatActivity() {
                         150,
                         430)
         )
+        val bookDB: BookDatabase = Room.databaseBuilder(this, BookDatabase::class.java, "book-database").build()
+        bookDB.bookDao().insertAll(demoList[0])
 
         val bookList: RecyclerView = findViewById(R.id.bookList)
 
         val linearLayoutManager = LinearLayoutManager(this)
         bookList.layoutManager = linearLayoutManager
 
-        val bookRecyclerViewAdapter = BookRecyclerViewAdapter(this, demoList)
+        val bookRecyclerViewAdapter = BookRecyclerViewAdapter(this, bookDB.bookDao().getAll())
         bookList.adapter = bookRecyclerViewAdapter
 
     }
